@@ -16,11 +16,13 @@ void Main()
 	System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 	Window::ResizeActual({ 1280,720 }, Centering::No);
 
-	auto edit = new Editor();
+	std::unique_ptr<Editor> edit = std::make_unique<Editor>();
 
 	while (System::Update())
 	{
 		edit->Update();
 		edit->Draw();
 	}
+
+	edit.reset();
 }

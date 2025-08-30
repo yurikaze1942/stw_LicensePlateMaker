@@ -11,6 +11,7 @@
 #include <iostream>
 #include <future>
 #include <Windows.h>
+#include <memory>
 
 #include "src/def/Dot.h"
 
