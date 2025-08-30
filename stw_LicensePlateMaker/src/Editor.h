@@ -1,5 +1,19 @@
 ﻿#pragma once
 
+struct PlateItem
+{
+public:
+	PlateItem(String _label, String _path, Texture _preview)
+		: Label(_label)
+		, Path(_path)
+		, Preview(_preview)
+	{};
+
+	String Label;
+	String Path;
+	Texture Preview;
+};
+
 class Editor
 {
 public:
@@ -71,7 +85,8 @@ private:
 		backB;
 
 	ListBoxState plateTypeList;
-	Array<String> platePath;
+
+	Array<PlateItem> plateItems;
 
 	Rect
 		dotProgressBar,
@@ -92,3 +107,4 @@ private:
     //     非同期ループとかで順番にバイナリーを見ていって、一致する並びがあれば置き換え
 
 };
+

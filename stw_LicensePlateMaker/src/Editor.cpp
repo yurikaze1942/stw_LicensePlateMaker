@@ -43,24 +43,62 @@ Editor::Editor()
 
 	font = Font( FontMethod::SDF, 64);
 
-	plateTypeList = ListBoxState
+	plateItems =
 	{
-		{
-			U"15度 中央",
-			U"15度 端寄せ",
-			U" 0度 中央",
-			U" 0度 端寄せ",
-		}
-	};
-	plateTypeList.selectedItemIndex = 0;
-
-	platePath =
-	{
+		{ U"15度 中寄せ 下寄り",
 		U"res\\mesh\\lp_18_15d_c_c.mesh",
+		Texture(U"res\\preview\\15cd.png")},
+
+		{ U"15度 端寄せ 下寄り",
 		U"res\\mesh\\lp_18_15d_s_c.mesh",
-		U"res\\mesh\\lp_18_0d_c_c.mesh",
-		U"res\\mesh\\lp_18_0d_s_c.mesh",
+		Texture(U"res\\preview\\15sd.png")},
+
+		{ U"15度 中寄せ 下下寄り",
+		U"res\\mesh\\lp_18_15d_c_d.mesh" ,
+		Texture(U"res\\preview\\15cdd.png")},
+
+		{ U"15度 端寄せ 下下寄り",
+		U"res\\mesh\\lp_18_15d_s_d.mesh" ,
+		Texture(U"res\\preview\\15sdd.png")},
+
+		{ U"15度 中寄せ 中寄り",
+		U"res\\mesh\\lp_18_15d_c_b.mesh" ,
+		Texture(U"res\\preview\\15cb.png")},
+
+		{ U"15度 端寄せ 中寄り",
+		U"res\\mesh\\lp_18_15d_s_b.mesh" ,
+		Texture(U"res\\preview\\15sb.png")},
+
+		{ U" 0度 中寄せ 下寄り",
+		U"res\\mesh\\lp_18_0d_c_c.mesh" ,
+		Texture(U"res\\preview\\0cd.png")},
+
+		{ U" 0度 端寄せ 下寄り",
+		U"res\\mesh\\lp_18_0d_s_c.mesh" ,
+		Texture(U"res\\preview\\0sd.png")},
+
+		{ U" 5度 中寄せ 中寄り",
+		U"res\\mesh\\lp_18_5d_c_b.mesh" ,
+		Texture(U"res\\preview\\5cm.png")},
+
+		{ U" 5度 端寄せ 中寄り",
+		U"res\\mesh\\lp_18_5d_s_b.mesh" ,
+		Texture(U"res\\preview\\5sm.png")},
+
+		{ U" 5度 中寄せ 中上寄り",
+		U"res\\mesh\\lp_18_5d_c_bt.mesh" ,
+		Texture(U"res\\preview\\5cmt.png")},
+
+		{ U" 5度 端寄せ 中上寄り", U"res\\mesh\\lp_18_5d_s_bt.mesh" ,
+		Texture(U"res\\preview\\5smt.png")},
+
 	};
+
+	plateTypeList = ListBoxState();
+	for (int i = 0; i < plateItems.size(); i++)
+		plateTypeList.items.push_back(plateItems[i].Label);
+
+	plateTypeList.selectedItemIndex = 0;
 
 	dotProgressBack = Rect(420, 12, prevSize.x - 420 - 10, 25);
 	dotProgressBar = Rect(422, 14, 0, 21);
@@ -84,7 +122,7 @@ void Editor::Update()
 
 	if (isGen)
 	{
-		if (gen.DotCurrentStep == gen.DotMaxStep)
+		if (gen.DotCurrentStep > gen.DotMaxStep)
 		{
 			task.join();
 			isGen = false;
@@ -158,6 +196,13 @@ void Editor::ColorMenuDraw()
 	backgroundColor.g = ColorValueDraw(backG, U"G:", backgroundColor.g, dotSize * WIDTH + OFFSET_X + 165, OFFSET_Y + 255);
 	backgroundColor.b = ColorValueDraw(backB, U"B:", backgroundColor.b, dotSize * WIDTH + OFFSET_X + 165, OFFSET_Y + 295);
 
+	if (SimpleGUI::Button(U"背景色で塗りつぶし", { dotSize * WIDTH + OFFSET_X + 50,OFFSET_Y + 380 }))
+	{
+		for (int i = 0; i < WIDTH * HEIGHT; i++)
+		{
+			dots[i].Color = backgroundColor;
+		}
+	}
 }
 
 int Editor::ColorValueDraw(TextEditState& _text, String _label, int _colorValue, int _x, int _y)
@@ -186,8 +231,11 @@ int Editor::ColorValueDraw(TextEditState& _text, String _label, int _colorValue,
 
 void Editor::UtilMenuDraw()
 {
-	SimpleGUI::CheckBox(isFrameDraw, U"枠線の描画", { dotSize * WIDTH + OFFSET_X + 10,OFFSET_Y + 340 });
-	SimpleGUI::ListBox(plateTypeList, { OFFSET_X , (OFFSET_Y * 2) + (dotSize * HEIGHT) }, 200, 156);
+	SimpleGUI::CheckBox(isFrameDraw, U"枠線の描画", { dotSize * WIDTH + OFFSET_X + 50,OFFSET_Y + 340 });
+	SimpleGUI::ListBox(plateTypeList, { OFFSET_X , (OFFSET_Y * 2) + (dotSize * HEIGHT) }, 500, 156);
+
+	plateItems[plateTypeList.selectedItemIndex.value()].Preview.resized(234, 156).draw(Arg::topLeft(OFFSET_X + 510, (OFFSET_Y * 2) + (dotSize * HEIGHT)));
+
 	if (SimpleGUI::Button(U"保存", { prevSize.x - 100, prevSize.y - 50 }, 90))
 	{
 		Create();
@@ -225,7 +273,7 @@ void Editor::ProgressDraw()
 void Editor::Create()
 {
 	int index = plateTypeList.selectedItemIndex.value();
-	gen = Creator(dots, WIDTH, HEIGHT, platePath[index]);
+	gen = Creator(dots, WIDTH, HEIGHT, plateItems[index].Path);
 	task = gen.Generate();
 	isGen = true;
 }

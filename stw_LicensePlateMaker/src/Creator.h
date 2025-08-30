@@ -13,7 +13,7 @@ public:
 private:
 	void Color2Binary(Color _color, char* _bytes);
 
-	void ReplaceColor(Color _color, int _x, int _y);
+	void ReplaceColor(char* _meshData, Color _color, int _x, int _y);
 
 	void GenerateWork();
 
@@ -21,7 +21,6 @@ private:
 
 	DotInfo* dots;
 	int xSize, ySize;
-	std::fstream file;
 	String platePath;
 };
 
