@@ -414,3 +414,8 @@ gmon.out
 #**/App/engine
 #**/App/dll
 stw_LicensePlateMaker/App/res/template/component_mod_compiler.com
+stw_LicensePlateMaker/App/res/work/_build.bat
+stw_LicensePlateMaker/App/res/work/component_mod_compiler.com
+stw_LicensePlateMaker/App/res/work/LicensePlate.xml
+stw_LicensePlateMaker/App/res/work/lp.mesh
+stw_LicensePlateMaker/App/res/GamePath.txt

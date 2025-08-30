@@ -3,7 +3,7 @@ class Creator
 {
 public:
 	Creator() = default;
-	Creator(DotInfo* _dots, int _xSize, int _ySize);
+	Creator(DotInfo* _dots, int _xSize, int _ySize, String _plate);
 
 	std::thread Generate();
 
@@ -21,6 +21,7 @@ private:
 
 	DotInfo* dots;
 	int xSize, ySize;
-	std::fstream file;	
+	std::fstream file;
+	String platePath;
 };
 

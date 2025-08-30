@@ -1,9 +1,10 @@
 ﻿#include "stdafx.h"
 
-Creator::Creator(DotInfo* _dots, int _xSize, int _ySize)
+Creator::Creator(DotInfo* _dots, int _xSize, int _ySize, String _plate)
 	: dots(_dots)
 	, xSize(_xSize)
 	, ySize(_ySize)
+	, platePath(_plate)
 {
 
 }
@@ -70,7 +71,7 @@ void Creator::GenerateWork()
 {
 	
 	std::filesystem::copy("res\\template\\", "res\\work\\", std::filesystem::copy_options::overwrite_existing);
-	std::filesystem::copy("res\\mesh\\lp_18_15d.mesh", "res\\work\\lp.mesh", std::filesystem::copy_options::overwrite_existing);
+	std::filesystem::copy(platePath.toWstr(), "res\\work\\lp.mesh", std::filesystem::copy_options::overwrite_existing);
 	ByteMaxStep = std::filesystem::file_size("res\\work\\lp.mesh");
 	file = std::fstream("res\\work\\lp.mesh", std::ios::binary | std::ios::ate | std::ios::in | std::ios::out);
 

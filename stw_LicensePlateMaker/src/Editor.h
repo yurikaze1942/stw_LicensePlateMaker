@@ -70,6 +70,15 @@ private:
 		backG,
 		backB;
 
+	ListBoxState plateTypeList;
+	Array<String> platePath;
+
+	Rect
+		dotProgressBar,
+		dotProgressBack,
+		byteProgressBar,
+		byteProgressBack;
+
 	bool isGen;
 
 	Creator gen;

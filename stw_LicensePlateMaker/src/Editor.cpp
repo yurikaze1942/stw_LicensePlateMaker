@@ -42,6 +42,30 @@ Editor::Editor()
 	isFrameDraw = true;
 
 	font = Font( FontMethod::SDF, 64);
+
+	plateTypeList = ListBoxState
+	{
+		{
+			U"15度 中央",
+			U"15度 端寄せ",
+			U" 0度 中央",
+			U" 0度 端寄せ",
+		}
+	};
+	plateTypeList.selectedItemIndex = 0;
+
+	platePath =
+	{
+		U"res\\mesh\\lp_18_15d_c_c.mesh",
+		U"res\\mesh\\lp_18_15d_s_c.mesh",
+		U"res\\mesh\\lp_18_0d_c_c.mesh",
+		U"res\\mesh\\lp_18_0d_s_c.mesh",
+	};
+
+	dotProgressBack = Rect(420, 12, prevSize.x - 420 - 10, 25);
+	dotProgressBar = Rect(422, 14, 0, 21);
+	byteProgressBack = Rect(420, 38, prevSize.x - 420 - 10, 25);
+	byteProgressBar = Rect(422, 40, 0, 21);
 }
 
 Editor::~Editor()
@@ -163,6 +187,7 @@ int Editor::ColorValueDraw(TextEditState& _text, String _label, int _colorValue,
 void Editor::UtilMenuDraw()
 {
 	SimpleGUI::CheckBox(isFrameDraw, U"枠線の描画", { dotSize * WIDTH + OFFSET_X + 10,OFFSET_Y + 340 });
+	SimpleGUI::ListBox(plateTypeList, { OFFSET_X , (OFFSET_Y * 2) + (dotSize * HEIGHT) }, 200, 156);
 	if (SimpleGUI::Button(U"保存", { prevSize.x - 100, prevSize.y - 50 }, 90))
 	{
 		Create();
@@ -171,13 +196,36 @@ void Editor::UtilMenuDraw()
 
 void Editor::ProgressDraw()
 {
-	font(U"Dot : {:>3}/{:>3} | {:.2f}%"_fmt(gen.DotCurrentStep, gen.DotMaxStep, ((float)gen.DotCurrentStep / gen.DotMaxStep) * 100)).draw(24, Arg::topLeft(10, 10), Palette::Black);
-	font(U"Byte: {:>5}/{:>5} | {:.2f}%"_fmt(gen.ByteCurrentStep, gen.ByteMaxStep, ((double)gen.ByteCurrentStep / gen.ByteMaxStep) * 100)).draw(24, Arg::topLeft(10, 35), Palette::Black);
+	float dotP = (float)gen.DotCurrentStep / gen.DotMaxStep;
+	double byteP = (double)gen.ByteCurrentStep / gen.ByteMaxStep;
+
+	font(U"Dot :         /         | {:.2f}%"_fmt(dotP * 100)).draw(24, Arg::topLeft(10, 10), Palette::Black);
+	font(U"Byte:               /               | {:.2f}%"_fmt(byteP * 100)).draw(24, Arg::topLeft(10, 35), Palette::Black);
+
+	font(U"{}"_fmt(gen.DotCurrentStep)).draw(24, Arg::topRight(10 + 5 * 24, 10), Palette::Black);
+	font(U"{}"_fmt(gen.DotMaxStep)).draw(24, Arg::topRight(10 + 8 * 24, 10), Palette::Black);
+
+	font(U"{}"_fmt(gen.ByteCurrentStep)).draw(24, Arg::topRight(6 + 7 * 24, 35), Palette::Black);
+	font(U"{}"_fmt(gen.ByteMaxStep)).draw(24, Arg::topRight(3 + 12 * 24, 35), Palette::Black);
+
+	dotProgressBack.w = prevSize.x - dotProgressBack.x - 10;
+	dotProgressBack.draw(Palette::Gray);
+	dotProgressBar.w = (dotProgressBack.w - 4) * dotP;
+	dotProgressBar.draw(Palette::Greenyellow);
+
+	byteProgressBack.w = prevSize.x - byteProgressBack.x - 10;
+	byteProgressBack.draw(Palette::Gray);
+	byteProgressBar.w = (byteProgressBack.w - 4) * byteP;
+	byteProgressBar.draw(Palette::Greenyellow);
+
+	//font(U"Dot : {:>3}/{:>3} | {:.2f}%"_fmt(gen.DotCurrentStep, gen.DotMaxStep, ((float)gen.DotCurrentStep / gen.DotMaxStep) * 100)).draw(24, Arg::topLeft(10, 10), Palette::Black);
+	//font(U"Byte: {:>5}/{:>5} | {:.2f}%"_fmt(gen.ByteCurrentStep, gen.ByteMaxStep, ((double)gen.ByteCurrentStep / gen.ByteMaxStep) * 100)).draw(24, Arg::topLeft(10, 35), Palette::Black);
 }
 
 void Editor::Create()
 {
-	gen = Creator(dots, WIDTH, HEIGHT);
+	int index = plateTypeList.selectedItemIndex.value();
+	gen = Creator(dots, WIDTH, HEIGHT, platePath[index]);
 	task = gen.Generate();
 	isGen = true;
 }
