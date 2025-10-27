@@ -219,9 +219,9 @@ int Editor::ColorValueDraw(TextEditState& _text, String _label, int _colorValue,
 		}
 
 		for (int i = _text.text.length() - 1; i >= 0; i--)
-			if (_text.text[i] < '0' || _text.text[i]>'9')
+			if (_text.text[i] < '0' || _text.text[i] > '9')
 				_text.text = _text.text.removed_at(i);
-		auto v = Parse<int>(_text.text);
+		int v = std::stoi(_text.text.toWstr().c_str());
 		if (v < 0)v = 0;
 		if (v > 255) v = 255;
 		return v;
