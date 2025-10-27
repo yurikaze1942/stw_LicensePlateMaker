@@ -69,6 +69,14 @@ Editor::Editor()
 		U"res\\mesh\\lp_18_15d_s_b.mesh" ,
 		Texture(U"res\\preview\\15sb.png")},
 
+		{ U"15度 中寄せ 半分下寄り",
+		U"res\\mesh\\lp_18_15d_c_hfb.mesh" ,
+		Texture(U"res\\preview\\15chfb.png")},
+
+		{ U"15度 端寄せ 半分下寄り",
+		U"res\\mesh\\lp_18_15d_s_hfb.mesh" ,
+		Texture(U"res\\preview\\15shfb.png")},
+
 		{ U" 0度 中寄せ 下寄り",
 		U"res\\mesh\\lp_18_0d_c_c.mesh" ,
 		Texture(U"res\\preview\\0cd.png")},
