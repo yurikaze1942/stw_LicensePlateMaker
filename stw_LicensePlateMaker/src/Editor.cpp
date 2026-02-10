@@ -1,8 +1,8 @@
 ﻿#include "stdafx.h"
 
-Editor::Editor()
-	: WIDTH(18)
-	, HEIGHT(9)
+Editor::Editor(Config* _config)
+	: WIDTH(_config->Width)
+	, HEIGHT(_config->Height)
 	, DOTS_WIDTH(0.7f)
 	, OFFSET_X(5)
 	, OFFSET_Y(5)
@@ -15,6 +15,8 @@ Editor::Editor()
 	, backR(U"255")
 	, backG(U"255")
 	, backB(U"255")
+
+	, config(_config)
 {
 	prevSize = Window::DefaultClientSize;
 
@@ -33,8 +35,8 @@ Editor::Editor()
 		}
 	}
 
-	auto x0 = dotSize * 9 + OFFSET_X;
-	centerLine = Line(x0, 0, x0, dotSize * 9 + (OFFSET_Y*2));
+	float x0 = dotSize * (WIDTH * 0.5f) + OFFSET_X;
+	centerLine = Line(x0, 0.0f, x0, dotSize * HEIGHT + (OFFSET_Y * 2.0f));
 
 	currentColor = Palette::Black;
 	backgroundColor = Palette::White;
@@ -43,70 +45,27 @@ Editor::Editor()
 
 	font = Font( FontMethod::SDF, 64);
 
-	plateItems =
+	plateConfigs =
 	{
-		{ U"15度 中寄せ 下寄り",
-		U"res\\mesh\\lp_18_15d_c_c.mesh",
-		Texture(U"res\\preview\\15cd.png")},
-
-		{ U"15度 端寄せ 下寄り",
-		U"res\\mesh\\lp_18_15d_s_c.mesh",
-		Texture(U"res\\preview\\15sd.png")},
-
-		{ U"15度 中寄せ 下下寄り",
-		U"res\\mesh\\lp_18_15d_c_d.mesh" ,
-		Texture(U"res\\preview\\15cdd.png")},
-
-		{ U"15度 端寄せ 下下寄り",
-		U"res\\mesh\\lp_18_15d_s_d.mesh" ,
-		Texture(U"res\\preview\\15sdd.png")},
-
-		{ U"15度 中寄せ 中寄り",
-		U"res\\mesh\\lp_18_15d_c_b.mesh" ,
-		Texture(U"res\\preview\\15cb.png")},
-
-		{ U"15度 端寄せ 中寄り",
-		U"res\\mesh\\lp_18_15d_s_b.mesh" ,
-		Texture(U"res\\preview\\15sb.png")},
-
-		{ U"15度 中寄せ 半分下寄り",
-		U"res\\mesh\\lp_18_15d_c_hfb.mesh" ,
-		Texture(U"res\\preview\\15chfb.png")},
-
-		{ U"15度 端寄せ 半分下寄り",
-		U"res\\mesh\\lp_18_15d_s_hfb.mesh" ,
-		Texture(U"res\\preview\\15shfb.png")},
-
-		{ U" 0度 中寄せ 下寄り",
-		U"res\\mesh\\lp_18_0d_c_c.mesh" ,
-		Texture(U"res\\preview\\0cd.png")},
-
-		{ U" 0度 端寄せ 下寄り",
-		U"res\\mesh\\lp_18_0d_s_c.mesh" ,
-		Texture(U"res\\preview\\0sd.png")},
-
-		{ U" 5度 中寄せ 中寄り",
-		U"res\\mesh\\lp_18_5d_c_b.mesh" ,
-		Texture(U"res\\preview\\5cm.png")},
-
-		{ U" 5度 端寄せ 中寄り",
-		U"res\\mesh\\lp_18_5d_s_b.mesh" ,
-		Texture(U"res\\preview\\5sm.png")},
-
-		{ U" 5度 中寄せ 中上寄り",
-		U"res\\mesh\\lp_18_5d_c_bt.mesh" ,
-		Texture(U"res\\preview\\5cmt.png")},
-
-		{ U" 5度 端寄せ 中上寄り", U"res\\mesh\\lp_18_5d_s_bt.mesh" ,
-		Texture(U"res\\preview\\5smt.png")},
-
+		{U"JP 9マス幅 18x9ドット",0},
+		{U"EU 9マス幅 29x7ドット",1},
 	};
+
+	LoadPlateList(config->ListType);
 
 	plateTypeList = ListBoxState();
 	for (int i = 0; i < plateItems.size(); i++)
 		plateTypeList.items.push_back(plateItems[i].Label);
 
 	plateTypeList.selectedItemIndex = 0;
+
+
+	plateConfigList = ListBoxState();
+	for (int i = 0; i < plateConfigs.size(); i++)
+		plateConfigList.items.push_back(plateConfigs[i].Label);
+
+	plateConfigList.selectedItemIndex = config->ListType;
+
 
 	dotProgressBack = Rect(420, 12, prevSize.x - 420 - 10, 25);
 	dotProgressBar = Rect(422, 14, 0, 21);
@@ -117,6 +76,98 @@ Editor::Editor()
 Editor::~Editor()
 {
 	delete[] dots;
+}
+
+void Editor::LoadPlateList(int _type)
+{
+	switch (_type)
+	{
+	case 0:
+		plateItems =
+		{
+			{ U"15度 中寄せ 下寄り",
+			U"res\\mesh\\lp_18_15d_c_c.mesh",
+			Texture(U"res\\preview\\15cd.png")},
+
+			{ U"15度 端寄せ 下寄り",
+			U"res\\mesh\\lp_18_15d_s_c.mesh",
+			Texture(U"res\\preview\\15sd.png")},
+
+			{ U"15度 中寄せ 下下寄り",
+			U"res\\mesh\\lp_18_15d_c_d.mesh" ,
+			Texture(U"res\\preview\\15cdd.png")},
+
+			{ U"15度 端寄せ 下下寄り",
+			U"res\\mesh\\lp_18_15d_s_d.mesh" ,
+			Texture(U"res\\preview\\15sdd.png")},
+
+			{ U"15度 中寄せ 中寄り",
+			U"res\\mesh\\lp_18_15d_c_b.mesh" ,
+			Texture(U"res\\preview\\15cb.png")},
+
+			{ U"15度 端寄せ 中寄り",
+			U"res\\mesh\\lp_18_15d_s_b.mesh" ,
+			Texture(U"res\\preview\\15sb.png")},
+
+			{ U"15度 中寄せ 半分下寄り",
+			U"res\\mesh\\lp_18_15d_c_hfb.mesh" ,
+			Texture(U"res\\preview\\15chfb.png")},
+
+			{ U"15度 端寄せ 半分下寄り",
+			U"res\\mesh\\lp_18_15d_s_hfb.mesh" ,
+			Texture(U"res\\preview\\15shfb.png")},
+
+			{ U" 0度 中寄せ 下寄り",
+			U"res\\mesh\\lp_18_0d_c_c.mesh" ,
+			Texture(U"res\\preview\\0cd.png")},
+
+			{ U" 0度 端寄せ 下寄り",
+			U"res\\mesh\\lp_18_0d_s_c.mesh" ,
+			Texture(U"res\\preview\\0sd.png")},
+
+			{ U" 5度 中寄せ 中寄り",
+			U"res\\mesh\\lp_18_5d_c_b.mesh" ,
+			Texture(U"res\\preview\\5cm.png")},
+
+			{ U" 5度 端寄せ 中寄り",
+			U"res\\mesh\\lp_18_5d_s_b.mesh" ,
+			Texture(U"res\\preview\\5sm.png")},
+
+			{ U" 5度 中寄せ 中上寄り",
+			U"res\\mesh\\lp_18_5d_c_bt.mesh" ,
+			Texture(U"res\\preview\\5cmt.png")},
+
+			{ U" 5度 端寄せ 中上寄り", U"res\\mesh\\lp_18_5d_s_bt.mesh" ,
+			Texture(U"res\\preview\\5smt.png")},
+		};
+		break;
+
+	case 1:
+		plateItems =
+		{
+			{ U"0度 中寄せ 中寄り",
+			U"res\\mesh\\eu_0d_xCenter_yCenter.mesh",
+			Texture(U"res\\preview\\eu_0dcc.png")},
+
+			{ U"0度 中寄せ 下寄り",
+			U"res\\mesh\\eu_0d_xCenter_yHalfBottom.mesh",
+			Texture(U"res\\preview\\eu_0dchb.png")},
+
+			{ U"0度 端寄せ 中寄り",
+			U"res\\mesh\\eu_0d_xHalfSide_yCenter.mesh",
+			Texture(U"res\\preview\\eu_0dhsc.png")},
+
+			{ U"0度 端寄せ 下寄り",
+			U"res\\mesh\\eu_0d_xHalfSide_yHalfBottom.mesh",
+			Texture(U"res\\preview\\eu_0dhshb.png")},
+		};
+
+		break;
+
+	default:
+		break;
+	}
+
 }
 
 void Editor::Update()
@@ -240,9 +291,16 @@ int Editor::ColorValueDraw(TextEditState& _text, String _label, int _colorValue,
 void Editor::UtilMenuDraw()
 {
 	SimpleGUI::CheckBox(isFrameDraw, U"枠線の描画", { dotSize * WIDTH + OFFSET_X + 50,OFFSET_Y + 340 });
-	SimpleGUI::ListBox(plateTypeList, { OFFSET_X , (OFFSET_Y * 2) + (dotSize * HEIGHT) }, 500, 156);
+	SimpleGUI::ListBox(plateTypeList, { OFFSET_X , (OFFSET_Y * 2) + (dotSize * HEIGHT) }, 300, 140);
 
-	plateItems[plateTypeList.selectedItemIndex.value()].Preview.resized(234, 156).draw(Arg::topLeft(OFFSET_X + 510, (OFFSET_Y * 2) + (dotSize * HEIGHT)));
+	auto item = plateItems[plateTypeList.selectedItemIndex.value()];
+	item.Preview.resized(234, 156).draw(Arg::topLeft(OFFSET_X + 310, (OFFSET_Y * 2) + (dotSize * HEIGHT)));
+
+	auto isSelected = SimpleGUI::ListBox(plateConfigList, { OFFSET_X , prevSize.y - OFFSET_Y - 64 }, 300, 64);
+	if (isSelected)
+	{
+		config->ChangeSize(plateConfigs[plateConfigList.selectedItemIndex.value()].ListType);
+	}
 
 	if (SimpleGUI::Button(U"保存", { prevSize.x - 100, prevSize.y - 50 }, 90))
 	{
@@ -298,8 +356,8 @@ void Editor::OnWindowSizeChange()
 		}
 	}
 
-	auto x0 = dotSize * 9 + OFFSET_X;
-	centerLine = Line(x0, 0, x0, dotSize * 9 + (OFFSET_Y * 2));
+	float x0 = dotSize * (WIDTH * 0.5f) + OFFSET_X;
+	centerLine = Line(x0, 0.0f, x0, dotSize * HEIGHT + (OFFSET_Y * 2.0f));
 }
 
 DotInfo* Editor::GetDot(int x, int y)

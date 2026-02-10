@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "src/def/Dot.h"
+#include "src/Config.h"
 
 #include "src/Creator.h"
 #include "src/Editor.h"

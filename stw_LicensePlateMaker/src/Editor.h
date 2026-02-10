@@ -14,11 +14,23 @@ public:
 	Texture Preview;
 };
 
+struct PlateConfig
+{
+public:
+	PlateConfig(String _label, int _listType)
+		: Label(_label)
+		, ListType(_listType)
+	{};
+
+	String Label;
+	int ListType;
+};
+
 class Editor
 {
 public:
 	/// @brief コンストラクター
-	Editor();
+	Editor(Config* _config);
 
 	~Editor();
 
@@ -29,6 +41,10 @@ public:
 	void Draw();
 
 private:
+
+	/// @brief プレートリストを読み込む
+	/// @param _type タイプ
+	void LoadPlateList(int _type);
 
 	/// @brief 18x9のグリッドを描画する
 	void GridDraw();
@@ -85,8 +101,10 @@ private:
 		backB;
 
 	ListBoxState plateTypeList;
+	ListBoxState plateConfigList;
 
 	Array<PlateItem> plateItems;
+	Array<PlateConfig> plateConfigs;
 
 	Rect
 		dotProgressBar,
@@ -99,6 +117,8 @@ private:
 	Creator gen;
 	std::thread task;
 	Font font;
+
+	Config* config;
 
 	//todo このクラスで色塗りをする
 	//     保存ボタンを押すとエクスポート用のクラスでmeshバイナリーの色を置き換える
