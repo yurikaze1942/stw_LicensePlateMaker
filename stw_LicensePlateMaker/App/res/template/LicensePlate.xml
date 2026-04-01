@@ -20,14 +20,10 @@
 			<position/>
 		</surface>
 	</surfaces>
-	<buoyancy_surfaces>
-		<surface orientation="4" rotation="0" shape="1" trans_type="0">
-			<position x="0" y="0" z="0"/>
-		</surface>
-	</buoyancy_surfaces>
+	<buoyancy_surfaces/>
 	<logic_nodes/>
 	<voxels>
-		<voxel flags="1" physics_shape="0">
+		<voxel flags="4" physics_shape="0">
 			<position x="0" y="0" z="0"/>
 		</voxel>
 	</voxels>
