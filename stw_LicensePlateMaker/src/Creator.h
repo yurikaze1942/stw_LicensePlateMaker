@@ -17,7 +17,7 @@ private:
 
 	void GenerateWork();
 
-	void openSaveFileDialog();
+	String getPathToSave();
 
 	DotInfo* dots;
 	int xSize, ySize;
